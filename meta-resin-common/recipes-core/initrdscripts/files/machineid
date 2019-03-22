@@ -19,7 +19,7 @@ machineid_enabled() {
         fi
     done
 
-    if ! mount -t ext4 /dev/disk/by-label/resin-state "$ROOTFS_DIR"/mnt/state; then
+    if ! mount -t ${bootparam_rootfstype} /dev/disk/by-label/resin-state "$ROOTFS_DIR"/mnt/state; then
         echo "[ERROR] Not able to mount resin-state, machine-id will not be persistent"
         return 1
     fi
