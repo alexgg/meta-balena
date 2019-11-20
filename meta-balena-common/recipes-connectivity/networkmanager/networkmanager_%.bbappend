@@ -11,6 +11,7 @@ SRC_URI_append = " \
     file://nm-tmpfiles.conf \
     file://balena-client-id.patch \
     file://remove-https-warning.patch \
+    file://Switch-to-non-volatile-storage-for-leases-timestamps.patch \
     "
 
 RDEPENDS_${PN}_append = " \

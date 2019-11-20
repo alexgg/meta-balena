@@ -1,0 +1,61 @@
+From: Alex Gonzalez <alexg@balena.io>
+Date: Wed, 20 Nov 2019 10:20:08 +0100
+Subject: [PATCH] Switch to non-volatile storage for leases, timestamps and
+ bssids states
+
+On embedded devices where storage space is limited and storage media wears
+out only data that needs to be persistent should be written to disk.
+
+There is no reason for leases, timestamps or bssids to reside in persistent
+storage.
+
+* Leases can be re-stated at boot time and DHCP servers will typically
+re-assign the same lease to the same MAC address.
+
+* Timestamps are used to keep track of the last-used time for a connection so
+re-connections can happen. On reboot, NM will reconnect to all active
+connections.
+
+* The seen-bssids cache can also be recreated from scratch on boot.
+
+Signed-off-by: Alex Gonzalez <alexg@balena.io>
+---
+ src/dhcp/nm-dhcp-dhclient.c | 5 +----
+ src/settings/nm-settings.c  | 4 ++--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/src/dhcp/nm-dhcp-dhclient.c b/src/dhcp/nm-dhcp-dhclient.c
+index 54b50479dda9..c7ac107f6513 100644
+--- a/src/dhcp/nm-dhcp-dhclient.c
++++ b/src/dhcp/nm-dhcp-dhclient.c
+@@ -143,10 +143,7 @@ get_dhclient_leasefile (int addr_family,
+ 		return g_steal_pointer (&path);
+ 	}
+ 
+-	if (nm_config_get_configure_and_quit (nm_config_get ()) == NM_CONFIG_CONFIGURE_AND_QUIT_INITRD)
+-		NM_SET_OUT (out_preferred_path, g_steal_pointer (&rundir_path));
+-	else
+-		NM_SET_OUT (out_preferred_path, g_steal_pointer (&path));
++	NM_SET_OUT (out_preferred_path, g_steal_pointer (&rundir_path));
+ 
+ 	/* If the leasefile we're looking for doesn't exist yet in the new location
+ 	 * (eg, /var/lib/NetworkManager) then look in old locations to maintain
+diff --git a/src/settings/nm-settings.c b/src/settings/nm-settings.c
+index 4bdcb52257e4..cf8841831c43 100644
+--- a/src/settings/nm-settings.c
++++ b/src/settings/nm-settings.c
+@@ -3735,12 +3735,12 @@ nm_settings_start (NMSettings *self, GError **error)
+ 
+ 	priv->hostname_manager = g_object_ref (nm_hostname_manager_get ());
+ 
+-	priv->kf_db_timestamps = nm_key_file_db_new (NMSTATEDIR "/timestamps",
++	priv->kf_db_timestamps = nm_key_file_db_new (NMRUNDIR "/timestamps",
+ 	                                             "timestamps",
+ 	                                             _kf_db_log_fcn,
+ 	                                             _kf_db_got_dirty_fcn,
+ 	                                             self);
+-	priv->kf_db_seen_bssids = nm_key_file_db_new (NMSTATEDIR "/seen-bssids",
++	priv->kf_db_seen_bssids = nm_key_file_db_new (NMRUNDIR "/seen-bssids",
+ 	                                              "seen-bssids",
+ 	                                              _kf_db_log_fcn,
+ 	                                              _kf_db_got_dirty_fcn,
