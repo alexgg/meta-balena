@@ -1,0 +1,64 @@
+{
+	"slug": "qemuarm64",
+	"version": 1,
+	"name": "QEMU ARM 64bit (EXPERIMENTAL)",
+	"arch": "aarch64",
+	"state": "EXPERIMENTAL",
+	"instructions": [
+		"Run the following to start the image:\n<br>\nOn systems with KVM support:\n<br>\n<code>qemu-system-x86_64 -drive file=resin-image-qemux86-64.img,media=disk,cache=none,format=raw -net nic,model=virtio -net user -m 512 -nographic -machine type=pc,accel=kvm -smp 4 -cpu host</code>\n<br>\nOn systems without KVM support:\n<br>\n<code>qemu-system-x86_64 -drive file=resin-image-qemux86-64.img,media=disk,cache=none,format=raw -net nic,model=virtio -net user -m 512 -nographic -machine type=pc -smp 4</code>\n<br>\nTweak <code>-smp</code> and <code>-cpu</code> parameters based on the CPU of the machine qemu is running on. <code>-cpu</code> parameter needs to be dropped on OSX and Windows.\n<br>\nTweak <code>-nographic</code> and <code>-m 512</code> to set the display of qemu and memory respectively.\n"
+	],
+	"gettingStartedLink": {
+		"windows": "http://docs.resin.io/#/pages/installing/gettingStarted.md#windows",
+		"osx": "http://docs.resin.io/#/pages/installing/gettingStarted.md#on-mac-and-linux",
+		"linux": "http://docs.resin.io/#/pages/installing/gettingStarted.md#on-mac-and-linux"
+	},
+	"supportsBlink": true,
+	"yocto": {
+		"machine": "qemuarm64",
+		"image": "resin-image",
+		"fstype": "resinos-img",
+		"version": "yocto-warrior",
+		"deployArtifact": "resin-image-qemuarm64.resinos-img",
+		"compressed": true
+	},
+	"configuration": {
+		"config": {
+			"partition": {
+				"primary": 1
+			},
+			"path": "/config.json"
+		}
+	},
+	"initialization": {
+		"options": [
+			{
+				"message": "Select a drive",
+				"type": "drive",
+				"name": "drive"
+			}
+		],
+		"operations": [
+			{
+				"command": "burn"
+			}
+		]
+	},
+	"options": [
+		{
+			"isGroup": true,
+			"isCollapsible": true,
+			"collapsed": true,
+			"name": "advanced",
+			"message": "Advanced",
+			"options": [
+				{
+					"message": "Check for updates every X minutes",
+					"name": "appUpdatePollInterval",
+					"type": "number",
+					"min": 10,
+					"default": 10
+				}
+			]
+		}
+	]
+}
