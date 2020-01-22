@@ -11,9 +11,7 @@
 #MACHINE ?= "raspberrypi4-64"
 #MACHINE ?= "npe-x500-m3"
 
-BALENA_STORAGE_surface-pro-6 = "overlay2"
-BALENA_STORAGE_surface-go = "overlay2"
-BALENA_STORAGE_raspberrypi4-64 = "overlay2"
+BALENA_STORAGE = "overlay2"
 
 # RaspberryPi specific variables
 GPU_MEM_rpi = "16"
@@ -43,7 +41,7 @@ RPI_USE_U_BOOT_rpi = "1"
 #TARGET_TAG ?= ""
 
 # Set this to 1 if development image is desired
-#DEVELOPMENT_IMAGE = "1"
+DEVELOPMENT_IMAGE = "1"
 
 # Set this to make build system generate resinhup bundles
 #RESINHUP ?= "yes"
